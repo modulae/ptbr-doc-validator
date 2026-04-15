@@ -10,7 +10,7 @@ class CnpjRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! static::isValid($value)) {
-            $fail('ptbr-doc-validator::validation.cnpj');
+            $fail(__('ptbr-doc-validator::validation.cnpj', ['attribute' => $attribute]));
         }
     }
 

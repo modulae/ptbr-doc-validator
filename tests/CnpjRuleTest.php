@@ -63,7 +63,7 @@ it('can validate a cnpj through the CnpjRule::validate method', function () {
     $failCalled = false;
     $fail = function ($message) use (&$failCalled) {
         $failCalled = true;
-        expect($message)->toBe('ptbr-doc-validator::validation.cnpj');
+        expect($message)->toBe(__('ptbr-doc-validator::validation.cnpj', ['attribute' => 'cnpj']));
     };
 
     $rule->validate('cnpj', 'invalid-cnpj', $fail);
