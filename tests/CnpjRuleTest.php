@@ -1,7 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Validator;
+use Modulae\PTBRDocValidator\Rules\CnpjRule;
+use Modulae\PTBRDocValidator\ValueObjects\Cnpj;
+
 it('validator works', function (string $value, bool $expected) {
-    expect(\Modulae\PTBRDocValidator\Rules\CnpjRule::isValid($value))->toBe($expected);
+    expect(CnpjRule::isValid($value))->toBe($expected);
 })->with([
     'Alphanumeric CNPJ with dots and dashes 1' => ['T6.JSP.XPS/0001-11', true],
     'Alphanumeric CNPJ with dots and dashes 2' => ['T6.JSP.XPS/J84K-69', true],
@@ -20,7 +24,7 @@ it('validator works', function (string $value, bool $expected) {
 ]);
 
 it('can use the validator through the validator facade', function (string $value, bool $expected) {
-    $validator = \Illuminate\Support\Facades\Validator::make(
+    $validator = Validator::make(
         ['cnpj' => $value],
         ['cnpj' => 'cnpj']
     );
@@ -32,7 +36,7 @@ it('can use the validator through the validator facade', function (string $value
 ]);
 
 it('can use the Cnpj value object', function () {
-    $cnpj = new \Modulae\PTBRDocValidator\ValueObjects\Cnpj('T6.JSP.XPS/0001-11');
+    $cnpj = new Cnpj('T6.JSP.XPS/0001-11');
 
     expect($cnpj->isValid())->toBeTrue()
         ->and($cnpj->formatted())->toBe('T6.JSP.XPS/0001-11')
@@ -41,25 +45,25 @@ it('can use the Cnpj value object', function () {
 });
 
 it('can create a Cnpj value object from another Cnpj object', function () {
-    $cnpj1 = new \Modulae\PTBRDocValidator\ValueObjects\Cnpj('T6.JSP.XPS/0001-11');
-    $cnpj2 = new \Modulae\PTBRDocValidator\ValueObjects\Cnpj($cnpj1);
+    $cnpj1 = new Cnpj('T6.JSP.XPS/0001-11');
+    $cnpj2 = new Cnpj($cnpj1);
 
     expect($cnpj2->raw())->toBe($cnpj1->raw());
 });
 
 it('can create a Cnpj value object using the static new method', function () {
-    $cnpj = \Modulae\PTBRDocValidator\ValueObjects\Cnpj::new('T6.JSP.XPS/0001-11');
+    $cnpj = Cnpj::new('T6.JSP.XPS/0001-11');
 
-    expect($cnpj)->toBeInstanceOf(\Modulae\PTBRDocValidator\ValueObjects\Cnpj::class)
+    expect($cnpj)->toBeInstanceOf(Cnpj::class)
         ->and($cnpj->raw())->toBe('T6JSPXPS000111');
 });
 
 it('can normalize a cnpj value using the static method', function () {
-    expect(\Modulae\PTBRDocValidator\ValueObjects\Cnpj::normalize('T6.JSP.XPS/0001-11'))->toBe('T6JSPXPS000111');
+    expect(Cnpj::normalize('T6.JSP.XPS/0001-11'))->toBe('T6JSPXPS000111');
 });
 
 it('can validate a cnpj through the CnpjRule::validate method', function () {
-    $rule = new \Modulae\PTBRDocValidator\Rules\CnpjRule;
+    $rule = new CnpjRule;
     $failCalled = false;
     $fail = function ($message) use (&$failCalled) {
         $failCalled = true;
@@ -75,7 +79,7 @@ it('can validate a cnpj through the CnpjRule::validate method', function () {
 });
 
 it('translates the error message correctly', function () {
-    $rule = new \Modulae\PTBRDocValidator\Rules\CnpjRule;
+    $rule = new CnpjRule;
     $failCalled = false;
     $message = '';
     $fail = function ($msg) use (&$failCalled, &$message) {
