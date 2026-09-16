@@ -45,6 +45,43 @@ readonly class Cnpj implements Castable, Stringable
         return CnpjRule::isValid(static::normalize($value));
     }
 
+    public static function formatBaseNumber(string $value): string
+    {
+        return str_pad(static::strip($value), 8, '0', STR_PAD_LEFT);
+    }
+
+    public static function formatStoreNumber(string $value): string
+    {
+        return str_pad(preg_replace('/[^0-9]/', '', $value), 4, '0', STR_PAD_LEFT);
+    }
+
+    public static function calculateDigit(string $cnpj): int
+    {
+        $weights = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+        $length = strlen($cnpj);
+        $offset = 13 - $length;
+        $sum = 0;
+
+        for ($i = 0; $i < $length; $i++) {
+            $char = $cnpj[$i];
+            $digit = ctype_alpha($char) ? (ord($char) - 48) : (int) $char;
+            $sum += $digit * $weights[$offset + $i];
+        }
+
+        $remainder = $sum % 11;
+
+        return $remainder < 2 ? 0 : 11 - $remainder;
+    }
+
+    public static function generateFromBaseStore(string $baseNumber, string $storeNumber): static
+    {
+        $cnpj = static::formatBaseNumber($baseNumber).static::formatStoreNumber($storeNumber);
+        $cnpj .= static::calculateDigit($cnpj);
+        $cnpj .= static::calculateDigit($cnpj);
+
+        return new static($cnpj);
+    }
+
     public static function castUsing(array $arguments): CastsAttributes
     {
         return new class implements CastsAttributes
@@ -81,6 +118,12 @@ readonly class Cnpj implements Castable, Stringable
     public function isValid(): bool
     {
         return static::isValidValue($this);
+    }
+
+    /** @return array{string, string} [$baseNumber, $storeNumber] */
+    public function splitToBaseStore(): array
+    {
+        return [substr($this->raw, 0, 8), substr($this->raw, 8, 4)];
     }
 
     public function formatted(): string
