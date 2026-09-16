@@ -21,6 +21,7 @@ it('validator works', function (string $value, bool $expected) {
     'Invalid CNPJ' => ['12.345.678/0001-00', false],
     'Zeroed CNPJ' => ['00.000.000/0000-00', false],
     'CNPJ with invalid characters' => ['32.332.643/0001-9!', false],
+    '13-digit input that becomes valid after left-pad' => ['1234567890107', false],
 ]);
 
 it('can use the validator through the validator facade', function (string $value, bool $expected) {

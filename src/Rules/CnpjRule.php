@@ -16,11 +16,13 @@ class CnpjRule implements ValidationRule
 
     public static function isValid(mixed $value): bool
     {
-        $cnpj = str_pad(strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string) $value)), 14, '0', STR_PAD_LEFT);
+        $cnpj = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string) $value));
 
         if (strlen($cnpj) !== 14) {
             return false;
         }
+
+        $cnpj = str_pad($cnpj, 14, '0', STR_PAD_LEFT);
 
         if (preg_match('/^([A-Za-z0-9])\\1{13}$/', $cnpj) === 1) {
             return false;
