@@ -22,8 +22,12 @@ readonly class Cnpj implements Castable, Stringable
             return;
         }
 
-        $sanitized = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string) $value));
-        $this->raw = str_pad($sanitized, self::REQUIRED_LENGTH, '0', STR_PAD_LEFT);
+        $this->raw = str_pad(static::strip((string) $value), self::REQUIRED_LENGTH, '0', STR_PAD_LEFT);
+    }
+
+    public static function strip(string $value): string
+    {
+        return strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $value));
     }
 
     public static function new(string|int $value): Cnpj

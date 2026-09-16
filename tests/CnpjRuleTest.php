@@ -63,6 +63,12 @@ it('can normalize a cnpj value using the static method', function () {
     expect(Cnpj::normalize('T6.JSP.XPS/0001-11'))->toBe('T6JSPXPS000111');
 });
 
+it('strips mask and uppercases without padding', function () {
+    expect(Cnpj::strip('12.abc.345/0001-88'))->toBe('12ABC345000188')
+        ->and(Cnpj::strip('123456'))->toBe('123456')
+        ->and(Cnpj::strip('T6.JSP.XPS/0001-11'))->toBe('T6JSPXPS000111');
+});
+
 it('can validate a cnpj through the CnpjRule::validate method', function () {
     $rule = new CnpjRule;
     $failCalled = false;

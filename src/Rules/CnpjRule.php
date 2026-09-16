@@ -4,6 +4,7 @@ namespace Modulae\PTBRDocValidator\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Modulae\PTBRDocValidator\ValueObjects\Cnpj;
 
 class CnpjRule implements ValidationRule
 {
@@ -16,7 +17,7 @@ class CnpjRule implements ValidationRule
 
     public static function isValid(mixed $value): bool
     {
-        $cnpj = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string) $value));
+        $cnpj = Cnpj::strip((string) $value);
 
         if (strlen($cnpj) !== 14) {
             return false;
