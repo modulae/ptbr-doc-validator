@@ -14,7 +14,7 @@ readonly class Cnpj implements Castable, Stringable
 
     private string $raw;
 
-    public function __construct(self|string|int $value)
+    final public function __construct(self|string|int $value)
     {
         if ($value instanceof self) {
             $this->raw = $value->raw();
@@ -52,7 +52,7 @@ readonly class Cnpj implements Castable, Stringable
 
     public static function formatStoreNumber(string $value): string
     {
-        return str_pad(preg_replace('/[^0-9]/', '', $value), 4, '0', STR_PAD_LEFT);
+        return str_pad(static::strip($value), 4, '0', STR_PAD_LEFT);
     }
 
     public static function calculateDigit(string $cnpj): int
