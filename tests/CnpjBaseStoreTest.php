@@ -8,10 +8,16 @@ it('formats base number stripping mask and padding to 8 chars', function () {
         ->and(Cnpj::formatBaseNumber('12.ABC.345'))->toBe('12ABC345');
 });
 
-it('formats store number stripping non-digits and padding to 4 chars', function () {
+it('formats store number preserving alphanumeric chars and padding to 4 chars', function () {
     expect(Cnpj::formatStoreNumber('0001'))->toBe('0001')
         ->and(Cnpj::formatStoreNumber('1'))->toBe('0001')
-        ->and(Cnpj::formatStoreNumber('AB01'))->toBe('0001');
+        ->and(Cnpj::formatStoreNumber('AB01'))->toBe('AB01');
+});
+
+it('generates a CNPJ preserving alphanumeric store segment — regression for formatStoreNumber stripping letters', function () {
+    $cnpj = Cnpj::generateFromBaseStore('12345678', 'A001');
+
+    expect(substr($cnpj->raw(), 8, 4))->toBe('A001');
 });
 
 it('calculates the first check digit for a numeric CNPJ base+store', function () {
